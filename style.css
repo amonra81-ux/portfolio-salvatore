@@ -54,3 +54,50 @@ html.motion-paused .mosaic-column{animation-play-state:paused!important}
 @media(max-width:1100px){.reel-rail{height:690px}}
 @media(max-width:700px){.reel-rail{height:595px}.reel-tools button{font-size:10px;padding:8px 10px}.reel-tools{gap:5px}.reel .silent-note{font-size:9px}}
 .reel-source{display:block;text-align:center;font:11px Arial,sans-serif;color:var(--orange);margin-top:12px}.reel:not(.active) .reel-source{visibility:hidden}
+
+/* Hero motion: il girato sparso si monta su una timeline, il cursore la scorre e la storia prende forma (loop 9 s). */
+.motion-stage{--loop:9s}
+.motion-orbits{opacity:.45}
+.m-clips i{position:absolute;display:block;overflow:hidden;border-radius:7px;background:#000;box-shadow:0 14px 30px #0009,inset 0 0 0 1px #ffcc8a40;
+  width:13%;height:21%;left:var(--sx);top:var(--sy);rotate:var(--sr);opacity:0;
+  animation:m-clip var(--loop) cubic-bezier(.7,0,.2,1) infinite;animation-delay:calc(var(--k) * 45ms);z-index:2}
+.m-clips i img{width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.9)}
+@keyframes m-clip{
+  0%{left:var(--sx);top:var(--sy);rotate:var(--sr);width:13%;height:21%;opacity:0;scale:.85}
+  7%{opacity:1;scale:1}
+  26%{left:var(--dx);top:var(--dy);rotate:var(--dr);width:13%;height:21%}
+  38%{left:var(--tx);top:73%;rotate:0deg;width:13.4%;height:12%;scale:1.06}
+  41%{scale:1}
+  86%{left:var(--tx);top:73%;rotate:0deg;width:13.4%;height:12%;opacity:1;scale:1}
+  96%{opacity:0;scale:.9}
+  100%{left:var(--sx);top:var(--sy);rotate:var(--sr);width:13%;height:21%;opacity:0}}
+.m-track{position:absolute;left:7%;right:7%;top:71%;height:16%;border-top:1px solid #6b5536;border-bottom:1px solid #3a3022;z-index:1;opacity:0;animation:m-track var(--loop) ease infinite}
+.m-track b{position:absolute;left:0;top:-2px;height:3px;width:0;background:var(--orange);box-shadow:0 0 12px #eda73599;animation:m-fill var(--loop) linear infinite}
+@keyframes m-track{0%,24%{opacity:0}34%,88%{opacity:1}96%,100%{opacity:0}}
+@keyframes m-fill{0%,44%{width:0}84%{width:100%}100%{width:100%}}
+.m-head{position:absolute;top:66%;height:24%;width:2px;left:7%;background:#ffe7bd;box-shadow:0 0 14px #ffd49c;border-radius:2px;z-index:3;opacity:0;animation:m-head var(--loop) linear infinite}
+.m-head:before{content:'';position:absolute;top:-6px;left:-5px;border:6px solid transparent;border-top-color:#ffe7bd}
+@keyframes m-head{0%,43%{left:7%;opacity:0}45%{opacity:1}84%{left:93%;opacity:1}88%,100%{left:93%;opacity:0}}
+.motion-words{inset:9% 8% 36%}
+.motion-words>span,.motion-words strong{animation:none}
+.motion-words>span:first-child{opacity:0;animation:m-in var(--loop) ease infinite;--a:38%;--b:88%}
+.motion-words strong{clip-path:inset(0 100% 0 0);animation:m-reveal var(--loop) cubic-bezier(.6,0,.2,1) infinite}
+.motion-words>span:last-child{opacity:0;animation:m-in2 var(--loop) ease infinite}
+@keyframes m-in{0%,36%{opacity:0;translate:0 8px}44%,86%{opacity:1;translate:0 0}94%,100%{opacity:0}}
+@keyframes m-reveal{0%,46%{clip-path:inset(0 100% 0 0);filter:blur(6px)}78%{clip-path:inset(0 0 0 0);filter:blur(0)}88%{clip-path:inset(0 0 0 0);opacity:1}96%,100%{clip-path:inset(0 0 0 0);opacity:0}}
+@keyframes m-in2{0%,76%{opacity:0;translate:0 8px}82%,88%{opacity:1;translate:0 0}96%,100%{opacity:0}}
+.motion-sound{bottom:3%;height:26px;opacity:0;animation:m-sound var(--loop) ease infinite}
+@keyframes m-sound{0%,44%{opacity:0}50%,88%{opacity:1}96%,100%{opacity:0}}
+.motion-sign{bottom:auto;top:4%;left:auto;right:6%}
+@media(max-width:700px){.m-clips i{border-radius:5px}.hero .motion-words{inset:6% 8% 38%}.hero .motion-words strong{font-size:clamp(40px,12vw,64px)}}
+@media(prefers-reduced-motion:reduce){html:not(.motion-override) .m-clips i{opacity:1;left:var(--tx);top:73%;rotate:0deg;width:13.4%;height:12%}html:not(.motion-override) .m-track{opacity:1}html:not(.motion-override) .motion-words strong{clip-path:none;filter:none}html:not(.motion-override) .motion-words>span{opacity:1}}
+
+/* tasselli astratti, niente immagini: luce calda, riflesso che scorre */
+.m-clips i{background:linear-gradient(135deg,#ffd49c 0%,#eda735 38%,#8d501c 100%);box-shadow:0 18px 40px -10px #000c,0 0 0 1px #ffcc8a55 inset,0 0 26px -6px #eda73577}
+.m-clips i:nth-child(2n){background:linear-gradient(160deg,#3a2a17,#1a140c);box-shadow:0 18px 40px -10px #000c,0 0 0 1px #eda73588 inset}
+.m-clips i:after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,#fff6 48%,transparent 62%);translate:-120% 0;animation:m-sheen var(--loop) ease-in-out infinite;animation-delay:calc(var(--k) * 90ms)}
+@keyframes m-sheen{0%,44%{translate:-120% 0}58%{translate:120% 0}100%{translate:120% 0}}
+/* i tasselli ignorano le posizioni dei vecchi frammenti */
+.motion-stage .m-clips i{right:auto;bottom:auto;transform:none;translate:none;border:0;animation:m-clip var(--loop) cubic-bezier(.7,0,.2,1) infinite;animation-delay:calc(var(--k) * 45ms)}
+.motion-stage .m-clips i:nth-child(2n){background:linear-gradient(150deg,#c98a3a,#6e3d14);box-shadow:0 18px 40px -10px #000c,0 0 0 1px #ffcc8a44 inset}
+.motion-stage .m-clips i:nth-child(3n){background:linear-gradient(150deg,#ffe2b8,#d99a43 60%,#7a4417)}
