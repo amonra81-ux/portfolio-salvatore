@@ -269,3 +269,39 @@ const finalRevealObserver = new IntersectionObserver(entries => {
   });
 }, {rootMargin:'-20% 0px -20% 0px', threshold:0});
 finalRevealObserver.observe(document.querySelector('.contact'));
+
+// Hero: i tasselli percorrono le orbite dell'SVG come elettroni, poi si incastrano in fila e la storia "prende forma".
+(()=>{
+  const stage=document.querySelector('.motion-stage'); if(!stage) return;
+  const svg=stage.querySelector('.motion-orbits'); const cards=[...stage.querySelectorAll('.m-clips i')];
+  const ORB=[{cx:300,cy:325,rx:235,ry:100,a:-40},{cx:300,cy:325,rx:270,ry:125,a:50}];
+  const LOOP=11000, FLY=[5600,6900], BACK=[9700,11000];
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  let t0=performance.now(), last=0;
+  function frame(now){
+    requestAnimationFrame(frame);
+    const paused=document.documentElement.classList.contains('motion-paused')||!stage.classList.contains('in-view');
+    if(paused){t0+=now-last;last=now;if(cards[0].style.transform)return;}
+    last=now;
+    const sr=stage.getBoundingClientRect(), vr=svg.getBoundingClientRect();
+    const sc=Math.min(vr.width/600,vr.height/650), ox=vr.left-sr.left+(vr.width-600*sc)/2, oy=vr.top-sr.top+(vr.height-650*sc)/2;
+    const W=sr.width,H=sr.height, cw=W*.11, ch=cw*1.55, pw=W*.125, ph=W*.085;
+    const t=(now-t0)%LOOP;
+    let k=0; if(t>=FLY[0]&&t<FLY[1])k=ease((t-FLY[0])/(FLY[1]-FLY[0])); else if(t>=FLY[1]&&t<BACK[0])k=1; else if(t>=BACK[0])k=1-ease((t-BACK[0])/(BACK[1]-BACK[0]));
+    stage.classList.toggle('formed',k>.97);
+    cards.forEach((c,i)=>{
+      const o=ORB[i%2], th=(t/LOOP)*Math.PI*2*1.6+i*Math.PI*2/cards.length*(i%2?1:1.15), al=o.a*Math.PI/180;
+      const ex=o.rx*Math.cos(th), ey=o.ry*Math.sin(th);
+      const x=ox+(o.cx+ex*Math.cos(al)-ey*Math.sin(al))*sc, y=oy+(o.cy+ex*Math.sin(al)+ey*Math.cos(al))*sc;
+      const dx=-o.rx*Math.sin(th)*Math.cos(al)-o.ry*Math.cos(th)*Math.sin(al), dy=-o.rx*Math.sin(th)*Math.sin(al)+o.ry*Math.cos(th)*Math.cos(al);
+      const ang=Math.atan2(dy,dx)*180/Math.PI+90, depth=(Math.sin(th)+1)/2, s=.62+.5*depth;
+      const sx=(W-pw*cards.length)/2+pw*i+pw/2, sy=H*.74;
+      const cx=x+(sx-x)*k, cy=y+(sy-y)*k, w=cw+(pw-cw)*k, h=ch+(ph-ch)*k, r=ang*(1-k), z=s+(1-s)*k;
+      c.style.width=w+'px';c.style.height=h+'px';
+      c.style.transform=`translate(${cx-w/2}px,${cy-h/2}px) rotate(${r}deg) scale(${z})`;
+      c.style.zIndex=k>.5?3:(depth>.5?3:1); c.style.opacity=k>.5?1:(.55+.45*depth);
+      c.classList.toggle('lock',k>.97);
+    });
+  }
+  requestAnimationFrame(n=>{last=n;t0=n;frame(n)});
+})();
