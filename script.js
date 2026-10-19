@@ -270,38 +270,53 @@ const finalRevealObserver = new IntersectionObserver(entries => {
 }, {rootMargin:'-20% 0px -20% 0px', threshold:0});
 finalRevealObserver.observe(document.querySelector('.contact'));
 
-// Hero: i tasselli percorrono le orbite dell'SVG come elettroni, poi si incastrano in fila e la storia "prende forma".
+// Hero: i tasselli orbitano come elettroni, poi uno alla volta cadono su una timeline stile Premiere (V1/A1), vengono tagliati col rasoio e montati in sequenza; il cursore blu legge la sequenza.
 (()=>{
   const stage=document.querySelector('.motion-stage'); if(!stage) return;
   const svg=stage.querySelector('.motion-orbits'); const cards=[...stage.querySelectorAll('.m-clips i')];
+  const N=cards.length, HD=34, RU=18;
+  cards.forEach((c,i)=>{const n=document.createElement('span');n.className='m-name';n.textContent=`clip_0${i+1}.mp4`;c.append(n);const fx=document.createElement('span');fx.className='m-fx';fx.textContent='fx';c.append(fx)});
+  const tl=document.createElement('div'); tl.className='m-tl';
+  tl.innerHTML='<div class="m-ru"></div><div class="m-hd"><span>V1</span><span>A1</span></div><div class="m-a1"></div><span class="m-tc">00;00;00;00</span><b class="m-ph"></b>';
+  stage.append(tl);
+  const ru=tl.querySelector('.m-ru'), a1=tl.querySelector('.m-a1'), tc=tl.querySelector('.m-tc'), ph=tl.querySelector('.m-ph');
+  ru.innerHTML=Array.from({length:N+1},(_,i)=>`<em style="--i:${i}">00;00;0${i*2};00</em>`).join('');
+  const auds=cards.map(()=>{const d=document.createElement('i');a1.append(d);return d});
   const ORB=[{cx:300,cy:325,rx:235,ry:100,a:-40},{cx:300,cy:325,rx:270,ry:125,a:50}];
-  const LOOP=11000, FLY=[5600,6900], BACK=[9700,11000];
-  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-  let t0=performance.now(), last=0;
+  const LOOP=12500, F0=4400, STEP=430, DUR=800, P0=F0+STEP*N+450, P1=P0+2000, B0=11300;
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, cl=v=>Math.min(1,Math.max(0,v));
+  let t0=0,last=0,started=false;
   function frame(now){
     requestAnimationFrame(frame);
     const paused=document.documentElement.classList.contains('motion-paused')||!stage.classList.contains('in-view');
-    if(paused){t0+=now-last;last=now;if(cards[0].style.transform)return;}
-    last=now;
+    if(paused&&started){t0+=now-last;last=now;return}
+    last=now;started=true;
     const sr=stage.getBoundingClientRect(), vr=svg.getBoundingClientRect();
     const sc=Math.min(vr.width/600,vr.height/650), ox=vr.left-sr.left+(vr.width-600*sc)/2, oy=vr.top-sr.top+(vr.height-650*sc)/2;
-    const W=sr.width,H=sr.height, cw=W*.11, ch=cw*1.55, pw=W*.125, ph=W*.085;
-    const t=(now-t0)%LOOP;
-    let k=0; if(t>=FLY[0]&&t<FLY[1])k=ease((t-FLY[0])/(FLY[1]-FLY[0])); else if(t>=FLY[1]&&t<BACK[0])k=1; else if(t>=BACK[0])k=1-ease((t-BACK[0])/(BACK[1]-BACK[0]));
-    stage.classList.toggle('formed',k>.97);
+    const W=sr.width,H=sr.height, cw=W*.11, ch=cw*1.55, pw=(W*.84-HD)/N, vh=Math.max(30,W*.075), ah=vh*.62;
+    const PL=(W-(HD+pw*N))/2, PT=H*.6, TLW=HD+pw*N, TLH=RU+vh+ah+10, X0=PL+HD, VY=PT+RU+4+vh/2;
+    const t=(now-t0)%LOOP, back=t>=B0?ease((t-B0)/(LOOP-B0)):0;
+    tl.style.cssText=`left:${PL}px;top:${PT}px;width:${TLW}px;height:${TLH}px;--hd:${HD}px;--ru:${RU}px;--vh:${vh}px;--ah:${ah}px;--pw:${pw}px;opacity:${cl((t-F0+500)/450)*(1-back)}`;
+    const pp=cl((t-P0)/(P1-P0)), pos=t<P0?cl((t-F0)/(P0-F0))*.0:pp;
+    ph.style.left=(HD+pos*pw*N)+'px';
+    const fr=Math.floor(pp*N*2*25); tc.textContent=`00;00;${String(Math.floor(fr/25)).padStart(2,'0')};${String(fr%25).padStart(2,'0')}`;
+    stage.classList.toggle('formed',t>P1-300&&t<B0+150);
     cards.forEach((c,i)=>{
-      const o=ORB[i%2], th=(t/LOOP)*Math.PI*2*1.6+i*Math.PI*2/cards.length*(i%2?1:1.15), al=o.a*Math.PI/180;
+      const o=ORB[i%2], th=(t/LOOP)*Math.PI*2*2+i*Math.PI*2/N*(i%2?1:1.15), al=o.a*Math.PI/180;
       const ex=o.rx*Math.cos(th), ey=o.ry*Math.sin(th);
       const x=ox+(o.cx+ex*Math.cos(al)-ey*Math.sin(al))*sc, y=oy+(o.cy+ex*Math.sin(al)+ey*Math.cos(al))*sc;
       const dx=-o.rx*Math.sin(th)*Math.cos(al)-o.ry*Math.cos(th)*Math.sin(al), dy=-o.rx*Math.sin(th)*Math.sin(al)+o.ry*Math.cos(th)*Math.cos(al);
       const ang=Math.atan2(dy,dx)*180/Math.PI+90, depth=(Math.sin(th)+1)/2, s=.62+.5*depth;
-      const sx=(W-pw*cards.length)/2+pw*i+pw/2, sy=H*.74;
-      const cx=x+(sx-x)*k, cy=y+(sy-y)*k, w=cw+(pw-cw)*k, h=ch+(ph-ch)*k, r=ang*(1-k), z=s+(1-s)*k;
+      const ts=F0+i*STEP, lk=cl((t-ts)/DUR), k=ease(cl(lk/.68))*(1-back), trim=ease(cl((lk-.72)/.28))*(1-back);
+      const longW=pw*1.6, w0=cw+(longW-cw)*k, w=w0+(pw-2-w0)*trim, h=ch+(vh-ch)*k;
+      const sx=X0+pw*i+1+w/2, cx=x+(sx-x)*k, cy=y+(VY-y)*k, r=ang*(1-k), z=s+(1-s)*k;
       c.style.width=w+'px';c.style.height=h+'px';
       c.style.transform=`translate(${cx-w/2}px,${cy-h/2}px) rotate(${r}deg) scale(${z})`;
-      c.style.zIndex=k>.5?3:(depth>.5?3:1); c.style.opacity=k>.5?1:(.55+.45*depth);
-      c.classList.toggle('lock',k>.97);
+      c.style.zIndex=k>.5?5:(depth>.5?3:1); c.style.opacity=k>.5?1:(.55+.45*depth);
+      c.style.setProperty('--cut',lk>.66&&lk<.9?1:0); c.style.setProperty('--on',k>.92?1:0);
+      c.classList.toggle('lock',pp*N>i+.5&&t<B0);
+      const a=auds[i]; a.style.left=(pw*i+1)+'px'; a.style.width=(pw-2)+'px'; a.style.transform=`scaleX(${trim})`; a.style.opacity=trim;
     });
   }
-  requestAnimationFrame(n=>{last=n;t0=n;frame(n)});
+  requestAnimationFrame(n=>{t0=n;last=n;frame(n)});
 })();
