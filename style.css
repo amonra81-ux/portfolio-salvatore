@@ -201,3 +201,4 @@ main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)
 .motion-words>span.mw-cap{width:100%;white-space:nowrap}
 @media(max-width:700px){.reel-rail{height:500px!important}.reel video,.clip-select{height:400px!important}}
 @media(max-width:700px){.motion-toggle,header .motion-toggle{display:none!important}}
+@media(max-width:700px){header nav>a.nav-cta{padding:13px 5px!important;margin-top:0!important;min-height:48px;border-bottom:1px solid #302b22!important;display:flex;align-items:center}}
