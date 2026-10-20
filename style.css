@@ -212,3 +212,15 @@ main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)
 .section-heading{margin-bottom:48px!important}
 @media(max-width:1100px){.reel-rail{height:580px!important}}
 @media(max-width:700px){.reel-rail{height:480px!important}.work-grid{padding-bottom:6px!important}.section-heading{margin-bottom:28px!important}}
+/* niente barre di scorrimento */
+.work-grid,.tools ul,.reel-rail{scrollbar-width:none;-ms-overflow-style:none}
+.work-grid::-webkit-scrollbar,.tools ul::-webkit-scrollbar,.reel-rail::-webkit-scrollbar{display:none}
+/* programmi: loop infinito sul telefono */
+@media(max-width:700px){
+ .tools-track{overflow:hidden;margin:0 -22px;padding:0 22px;-webkit-mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+ .tools ul.loop{overflow:visible!important;flex-wrap:nowrap!important;width:max-content;gap:18px!important;padding-bottom:0!important;animation:tools-loop 22s linear infinite}
+ .tools h3,.tools .eyebrow{padding-left:0}
+}
+@keyframes tools-loop{to{transform:translateX(calc(-50% - 9px))}}
+@media(prefers-reduced-motion:reduce){html:not(.motion-override) .tools ul.loop{animation:none}}
+html.motion-paused .tools ul.loop{animation-play-state:paused}

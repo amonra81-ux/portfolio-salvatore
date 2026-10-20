@@ -347,3 +347,9 @@ finalRevealObserver.observe(document.querySelector('.contact'));
   let t; const presto=()=>{clearTimeout(t);t=setTimeout(pareggia,150)};
   addEventListener('load',pareggia); addEventListener('resize',presto); document.fonts&&document.fonts.ready.then(pareggia); pareggia();
 })();
+
+// Programmi che uso: sul telefono la fila si duplica e scorre in loop infinito.
+(()=>{const ul=document.querySelector('.tools ul'); if(!ul) return; const mq=matchMedia('(max-width:700px)');
+  const set=()=>{ if(mq.matches&&!ul.classList.contains('loop')){if(!ul.parentElement.classList.contains('tools-track')){const w=document.createElement('div');w.className='tools-track';ul.before(w);w.append(ul)}[...ul.children].forEach(li=>{const c=li.cloneNode(true);c.setAttribute('aria-hidden','true');ul.append(c)});ul.classList.add('loop')}
+    else if(!mq.matches&&ul.classList.contains('loop')){ul.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.remove());ul.classList.remove('loop')}};
+  set(); mq.addEventListener('change',set);})();
