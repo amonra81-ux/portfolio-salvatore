@@ -289,9 +289,10 @@ finalRevealObserver.observe(document.querySelector('.contact'));
   function frame(now){
     requestAnimationFrame(frame);
     const paused=document.documentElement.classList.contains('motion-paused')||!stage.classList.contains('in-view');
-    if(paused&&started){t0+=now-last;last=now;return}
-    last=now;started=true;
-    const sr=stage.getBoundingClientRect(), vr=svg.getBoundingClientRect();
+    const sr=stage.getBoundingClientRect(); const sz=sr.width+'x'+sr.height;
+    if(paused&&started){t0+=now-last;last=now;if(sz===frame.sz)return}
+    frame.sz=sz; last=now;started=true;
+    const vr=svg.getBoundingClientRect();
     const sc=Math.min(vr.width/600,vr.height/650), ox=vr.left-sr.left+(vr.width-600*sc)/2, oy=vr.top-sr.top+(vr.height-650*sc)/2;
     const W=sr.width,H=sr.height, cw=W*.11, ch=cw*1.55, pw=(W*.84-HD)/N, vh=Math.max(30,W*.075), ah=vh*.62;
     const PL=(W-(HD+pw*N))/2, PT=H*.6, TLW=HD+pw*N, TLH=RU+vh+ah+10, X0=PL+HD, VY=PT+RU+4+vh/2;
@@ -377,3 +378,9 @@ finalRevealObserver.observe(document.querySelector('.contact'));
   const via=()=>{giro('.work-track',28);giro('.tools-track',22)};
   if(document.readyState==='complete') via(); else addEventListener('load',via);
 })();
+
+// Le copertine dei video arrivano solo quando il video sta per entrare nello schermo (pagina più leggera all'apertura).
+(()=>{const vs=[...document.querySelectorAll('video[data-poster]')]; const metti=v=>{if(v.dataset.poster){v.poster=v.dataset.poster;delete v.dataset.poster}};
+  if(!('IntersectionObserver' in window)){vs.forEach(metti);return}
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){metti(e.target);io.unobserve(e.target)}}),{rootMargin:'600px 0px'});
+  vs.forEach(v=>io.observe(v));})();
