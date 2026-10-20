@@ -361,3 +361,19 @@ finalRevealObserver.observe(document.querySelector('.contact'));
     else if(!mq.matches&&g.classList.contains('loop')){g.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.remove());g.classList.remove('loop')}};
   g.addEventListener('touchstart',()=>{g.classList.add('ferma');clearTimeout(t);t=setTimeout(()=>g.classList.remove('ferma'),4000)},{passive:true});
   set(); mq.addEventListener('change',set);})();
+
+// Loop infinito che si può anche trascinare col dito (telefono): avanza da solo, si ferma al tocco, riparte dopo.
+(()=>{const mq=matchMedia('(max-width:700px)');
+  function giro(sel,vel){const tr=document.querySelector(sel); if(!tr) return; let fermo=0,last=0,t;
+    const stop=()=>{fermo=performance.now()+2500};
+    ['touchstart','pointerdown','wheel'].forEach(ev=>tr.addEventListener(ev,stop,{passive:true}));
+    tr.addEventListener('scroll',()=>{const h=tr.scrollWidth/2; if(tr.scrollLeft>=h) tr.scrollLeft-=h; else if(tr.scrollLeft<=0) tr.scrollLeft+=h},{passive:true});
+    requestAnimationFrame(()=>{if(mq.matches) tr.scrollLeft=tr.scrollWidth/2});
+    function f(now){requestAnimationFrame(f); const dt=last?now-last:0; last=now;
+      if(!mq.matches||document.documentElement.classList.contains('motion-paused')||now<fermo) return;
+      const r=tr.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+      tr.scrollLeft+=vel*dt/1000; const h=tr.scrollWidth/2; if(tr.scrollLeft>=h) tr.scrollLeft-=h}
+    requestAnimationFrame(f)}
+  const via=()=>{giro('.work-track',28);giro('.tools-track',22)};
+  if(document.readyState==='complete') via(); else addEventListener('load',via);
+})();

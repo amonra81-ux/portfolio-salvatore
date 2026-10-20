@@ -236,3 +236,9 @@ html.motion-paused .tools ul.loop{animation-play-state:paused}
 @keyframes work-loop{to{transform:translateX(calc(-50% - 7.5px))}}
 @media(prefers-reduced-motion:reduce){html:not(.motion-override) .work-grid.loop{animation:none}}
 html.motion-paused .work-grid.loop{animation-play-state:paused}
+/* loop che si può anche scorrere col dito: niente animazione CSS, lo muove lo script */
+@media(max-width:700px){
+ .work-grid.loop,.tools ul.loop{animation:none!important;transform:none!important}
+ .work-track,.tools-track{overflow-x:auto!important;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
+ .work-track::-webkit-scrollbar,.tools-track::-webkit-scrollbar{display:none}
+}
