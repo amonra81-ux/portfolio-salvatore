@@ -192,11 +192,11 @@ html.motion-paused .mosaic-column{animation-play-state:paused!important}
 .promessa+.intro{margin-top:16px!important}
 @media(max-width:700px){.hero .promessa{order:4;font-size:clamp(28px,8vw,36px);margin:4px 0 14px}.hero .intro{order:4}}
 /* === spazi uguali tra tutte le sezioni === */
-:root{--sp:104px}
+:root{--sp:56px}
 main>section,main>section.section,.bio,.faq,.contact,.results,.audiences,.show-section{padding-top:var(--sp)!important;padding-bottom:var(--sp)!important}
 main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)!important}
 .faq{max-width:1380px}
-@media(max-width:700px){:root{--sp:64px}main>section.hero{padding-top:26px!important;padding-bottom:40px!important}}
+@media(max-width:700px){:root{--sp:32px}main>section.hero{padding-top:26px!important;padding-bottom:40px!important}}
 /* telefono: scritta piccola della hero su una riga, showreel senza vuoto sotto */
 .motion-words>span.mw-cap{width:100%;white-space:nowrap}
 @media(max-width:700px){.reel-rail{height:500px!important}.reel video,.clip-select{height:400px!important}}
