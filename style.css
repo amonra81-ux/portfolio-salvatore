@@ -154,3 +154,6 @@ html.motion-paused .mosaic-column{animation-play-state:paused!important}
 .m-forma{top:85%}
 .motion-stage .motion-fragments.m-clips{z-index:5}.motion-words{z-index:4}
 .m-ru em:first-child{display:none}
+/* via il contatore delle clip, bordi della sezione showreel sfumati */
+.show-section>.wrap>.small{display:none}
+.show-section{background:linear-gradient(#0b0b0b,#0b0b0b00 18%,#0b0b0b00 78%,#0b0b0b),radial-gradient(ellipse at 50% 60%,#29251d 0,#0b0b0b 65%)}
