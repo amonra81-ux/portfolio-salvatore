@@ -200,3 +200,4 @@ main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)
 /* telefono: scritta piccola della hero su una riga, showreel senza vuoto sotto */
 .motion-words>span.mw-cap{width:100%;white-space:nowrap}
 @media(max-width:700px){.reel-rail{height:500px!important}.reel video,.clip-select{height:400px!important}}
+@media(max-width:700px){.motion-toggle,header .motion-toggle{display:none!important}}
