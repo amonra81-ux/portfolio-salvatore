@@ -202,3 +202,13 @@ main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)
 @media(max-width:700px){.reel-rail{height:500px!important}.reel video,.clip-select{height:400px!important}}
 @media(max-width:700px){.motion-toggle,header .motion-toggle{display:none!important}}
 @media(max-width:700px){header nav>a.nav-cta{padding:13px 5px!important;margin-top:0!important;min-height:48px;border-bottom:1px solid #302b22!important;display:flex;align-items:center}}
+/* spazio vero uguale tra sezioni: via i margini interni in fondo/in cima */
+.cinematic-cases .case:last-of-type{padding-bottom:0!important}
+.cinematic-cases .case:first-of-type{padding-top:0!important}
+.reel-rail{height:600px!important}
+.work-grid{padding-bottom:0!important;margin-bottom:0!important}
+.faq details:last-child{border-bottom:0}
+.faq h2{margin-bottom:24px!important}
+.section-heading{margin-bottom:48px!important}
+@media(max-width:1100px){.reel-rail{height:580px!important}}
+@media(max-width:700px){.reel-rail{height:480px!important}.work-grid{padding-bottom:6px!important}.section-heading{margin-bottom:28px!important}}
