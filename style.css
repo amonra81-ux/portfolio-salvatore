@@ -224,3 +224,15 @@ main>section.hero{padding-top:72px!important;padding-bottom:calc(var(--sp) * .6)
 @keyframes tools-loop{to{transform:translateX(calc(-50% - 9px))}}
 @media(prefers-reduced-motion:reduce){html:not(.motion-override) .tools ul.loop{animation:none}}
 html.motion-paused .tools ul.loop{animation-play-state:paused}
+/* programmi: solo icone */
+@media(max-width:700px){.tools li span{display:none}.tools img{margin-bottom:0!important}}
+/* lavori: loop infinito sul telefono, si ferma al tocco */
+@media(max-width:700px){
+ .work-track{overflow:hidden;margin:0 -22px;-webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+ .work-grid.loop{display:flex!important;overflow:visible!important;width:max-content;gap:15px!important;margin:0!important;padding:0 0 6px 22px!important;scroll-snap-type:none!important;animation:work-loop 40s linear infinite}
+ .work-grid.loop .work{flex:0 0 78vw!important;scroll-snap-align:none}
+ .work-grid.loop:hover,.work-grid.loop:active,.work-grid.loop.ferma{animation-play-state:paused}
+}
+@keyframes work-loop{to{transform:translateX(calc(-50% - 7.5px))}}
+@media(prefers-reduced-motion:reduce){html:not(.motion-override) .work-grid.loop{animation:none}}
+html.motion-paused .work-grid.loop{animation-play-state:paused}

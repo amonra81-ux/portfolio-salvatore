@@ -353,3 +353,11 @@ finalRevealObserver.observe(document.querySelector('.contact'));
   const set=()=>{ if(mq.matches&&!ul.classList.contains('loop')){if(!ul.parentElement.classList.contains('tools-track')){const w=document.createElement('div');w.className='tools-track';ul.before(w);w.append(ul)}[...ul.children].forEach(li=>{const c=li.cloneNode(true);c.setAttribute('aria-hidden','true');ul.append(c)});ul.classList.add('loop')}
     else if(!mq.matches&&ul.classList.contains('loop')){ul.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.remove());ul.classList.remove('loop')}};
   set(); mq.addEventListener('change',set);})();
+
+// Lavori: sul telefono le schede scorrono in loop infinito; un tocco le ferma per qualche secondo.
+(()=>{const g=document.querySelector('.work-grid'); if(!g) return; const mq=matchMedia('(max-width:700px)'); let t;
+  const set=()=>{ if(mq.matches&&!g.classList.contains('loop')){ if(!g.parentElement.classList.contains('work-track')){const w=document.createElement('div');w.className='work-track';g.before(w);w.append(g)}
+      [...g.children].forEach(c=>{const d=c.cloneNode(true);d.setAttribute('aria-hidden','true');d.tabIndex=-1;g.append(d)}); g.classList.add('loop')}
+    else if(!mq.matches&&g.classList.contains('loop')){g.querySelectorAll('[aria-hidden="true"]').forEach(n=>n.remove());g.classList.remove('loop')}};
+  g.addEventListener('touchstart',()=>{g.classList.add('ferma');clearTimeout(t);t=setTimeout(()=>g.classList.remove('ferma'),4000)},{passive:true});
+  set(); mq.addEventListener('change',set);})();
