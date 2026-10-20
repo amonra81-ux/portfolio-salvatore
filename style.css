@@ -242,3 +242,6 @@ html.motion-paused .work-grid.loop{animation-play-state:paused}
  .work-track,.tools-track{overflow-x:auto!important;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}
  .work-track::-webkit-scrollbar,.tools-track::-webkit-scrollbar{display:none}
 }
+
+/* telefono: il mosaico finale si vede di più */
+@media(max-width:760px){.contact-mosaic{opacity:.5;filter:saturate(.8)}}

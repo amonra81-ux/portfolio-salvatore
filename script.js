@@ -365,15 +365,17 @@ finalRevealObserver.observe(document.querySelector('.contact'));
 
 // Loop infinito che si può anche trascinare col dito (telefono): avanza da solo, si ferma al tocco, riparte dopo.
 (()=>{const mq=matchMedia('(max-width:700px)');
-  function giro(sel,vel){const tr=document.querySelector(sel); if(!tr) return; let fermo=0,last=0,t;
+  // iPhone arrotonda scrollLeft ai pixel interi: la posizione si tiene in un numero a parte (pos), altrimenti il passo da 0,4 px non avanza mai.
+  function giro(sel,vel){const tr=document.querySelector(sel); if(!tr) return; let fermo=0,last=0,pos=-1;
     const stop=()=>{fermo=performance.now()+2500};
     ['touchstart','pointerdown','wheel'].forEach(ev=>tr.addEventListener(ev,stop,{passive:true}));
-    tr.addEventListener('scroll',()=>{const h=tr.scrollWidth/2; if(tr.scrollLeft>=h) tr.scrollLeft-=h; else if(tr.scrollLeft<=0) tr.scrollLeft+=h},{passive:true});
-    requestAnimationFrame(()=>{if(mq.matches) tr.scrollLeft=tr.scrollWidth/2});
-    function f(now){requestAnimationFrame(f); const dt=last?now-last:0; last=now;
+    const giraDentro=x=>{const h=tr.scrollWidth/2; if(h<=0) return x; while(x>=h+20) x-=h; while(x<20) x+=h; return x};
+    tr.addEventListener('scroll',()=>{if(performance.now()<fermo){const x=giraDentro(tr.scrollLeft); if(Math.abs(x-tr.scrollLeft)>1) tr.scrollLeft=x; pos=x}},{passive:true});
+    function f(now){requestAnimationFrame(f); const dt=last?Math.min(now-last,100):0; last=now;
       if(!mq.matches||document.documentElement.classList.contains('motion-paused')||now<fermo) return;
       const r=tr.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
-      tr.scrollLeft+=vel*dt/1000; const h=tr.scrollWidth/2; if(tr.scrollLeft>=h) tr.scrollLeft-=h}
+      if(pos<0||Math.abs(tr.scrollLeft-pos)>2) pos=tr.scrollLeft<20?tr.scrollWidth/4:tr.scrollLeft;
+      pos=giraDentro(pos+vel*dt/1000); tr.scrollLeft=pos}
     requestAnimationFrame(f)}
   const via=()=>{giro('.work-track',28);giro('.tools-track',22)};
   if(document.readyState==='complete') via(); else addEventListener('load',via);
@@ -384,3 +386,8 @@ finalRevealObserver.observe(document.querySelector('.contact'));
   if(!('IntersectionObserver' in window)){vs.forEach(metti);return}
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){metti(e.target);io.unobserve(e.target)}}),{rootMargin:'600px 0px'});
   vs.forEach(v=>io.observe(v));})();
+
+// Mosaico della chiusura: su iPhone le foto 'lazy' dentro un riquadro ruotato non partono; si caricano quando la sezione si avvicina.
+(()=>{const m=document.querySelector('.contact-mosaic'); if(!m) return; const vai=()=>m.querySelectorAll('img[loading="lazy"]').forEach(i=>i.loading='eager');
+  if(!('IntersectionObserver' in window)){vai();return}
+  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){vai();io.disconnect()}},{rootMargin:'1200px 0px'}); io.observe(document.querySelector('.contact'));})();
