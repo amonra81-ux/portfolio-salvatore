@@ -366,14 +366,18 @@ finalRevealObserver.observe(document.querySelector('.contact'));
 // Loop infinito che si può anche trascinare col dito (telefono): avanza da solo, si ferma al tocco, riparte dopo.
 (()=>{const mq=matchMedia('(max-width:700px)');
   // iPhone arrotonda scrollLeft ai pixel interi: la posizione si tiene in un numero a parte (pos), altrimenti il passo da 0,4 px non avanza mai.
-  function giro(sel,vel){const tr=document.querySelector(sel); if(!tr) return; let fermo=0,last=0,pos=-1;
+  // Il contenitore si cerca a ogni giro: se la pagina si apre larga e poi si stringe, la fila nasce dopo e il loop parte lo stesso.
+  function giro(sel,vel){let tr=null,fermo=0,last=0,pos=-1;
     const stop=()=>{fermo=performance.now()+2500};
-    ['touchstart','pointerdown','wheel'].forEach(ev=>tr.addEventListener(ev,stop,{passive:true}));
     const giraDentro=x=>{const h=tr.scrollWidth/2; if(h<=0) return x; while(x>=h+20) x-=h; while(x<20) x+=h; return x};
-    tr.addEventListener('scroll',()=>{if(performance.now()<fermo){const x=giraDentro(tr.scrollLeft); if(Math.abs(x-tr.scrollLeft)>1) tr.scrollLeft=x; pos=x}},{passive:true});
+    const aggancia=el=>{tr=el; pos=-1;
+      ['touchstart','pointerdown','wheel'].forEach(ev=>tr.addEventListener(ev,stop,{passive:true}));
+      tr.addEventListener('scroll',()=>{if(performance.now()<fermo){const x=giraDentro(tr.scrollLeft); if(Math.abs(x-tr.scrollLeft)>1) tr.scrollLeft=x; pos=x}},{passive:true})};
     function f(now){requestAnimationFrame(f); const dt=last?Math.min(now-last,100):0; last=now;
-      if(!mq.matches||document.documentElement.classList.contains('motion-paused')||now<fermo) return;
-      const r=tr.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+      if(!mq.matches) return;
+      if(!tr||!tr.isConnected){const el=document.querySelector(sel); if(!el) return; aggancia(el)}
+      if(document.documentElement.classList.contains('motion-paused')||now<fermo) return;
+      const r=tr.getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight||tr.scrollWidth<=tr.clientWidth) return;
       if(pos<0||Math.abs(tr.scrollLeft-pos)>2) pos=tr.scrollLeft<20?tr.scrollWidth/4:tr.scrollLeft;
       pos=giraDentro(pos+vel*dt/1000); tr.scrollLeft=pos}
     requestAnimationFrame(f)}
